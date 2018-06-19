@@ -28,6 +28,7 @@ public class Puke extends TomatoHead {
 		setDirection(2 * direction.getX() + direction.getX() * (0.5*spread - Math.random()*spread),
 				2 * direction.getY() + direction.getY() * (0.5*spread - Math.random()*spread));
 		setWorth(3);
+		setName("Puke ");
 	}
 
 	@Override

@@ -1,4 +1,5 @@
 package game;
+
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import javafx.geometry.Dimension2D;
+import observerpattern.PlayerObservable;
 
 /*
  * This class handles the interactions between all of the sprites by
@@ -40,6 +42,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	private boolean paused, madeBonus;
 	private double numRocksKilled = 0;
 	private int delay = 0;
+	private PlayerObservable playerObservable;
 
 	public DrugWorld(DrugComponent DC) {
 		this.currentLevel = 1;
@@ -82,10 +85,9 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	}
 
 	/*
-	 * Checks to see if the given point is inside the world, and returns a
-	 * character depending on where the point is in the map. if it is out of the
-	 * width range, returns x, if out by height, return y, else return g for
-	 * good
+	 * Checks to see if the given point is inside the world, and returns a character
+	 * depending on where the point is in the map. if it is out of the width range,
+	 * returns x, if out by height, return y, else return g for good
 	 */
 	public char isInsideWorld(Point2D point, int size) {
 		if (point.getX() >= background.getWidth() - size / 2 - 2 || point.getX() <= 0 + size / 2 + 2)
@@ -97,8 +99,8 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	}
 
 	/*
-	 * resets the level depending on if the the reset is because of manual
-	 * change, or if the player died
+	 * resets the level depending on if the the reset is because of manual change,
+	 * or if the player died
 	 */
 	public void resetLevel(boolean isDifLevel) {
 		if (!isDifLevel) {
@@ -153,8 +155,8 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	}
 
 	/*
-	 * gets all of the drawable things and packs them into an arrayList to be
-	 * drawn by the drugComponent class
+	 * gets all of the drawable things and packs them into an arrayList to be drawn
+	 * by the drugComponent class
 	 * 
 	 * THIS CAN PROBABLY BE FIXED WITH STRATEGIES
 	 */
@@ -215,7 +217,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 				for (DirtBlock b : this.blocks) {
 					lastBlock = b;
 					double distance = point.distanceSq(b.getCenterPoint());
-					
+
 					if (distance < nearestDistance) {
 						nearestDistance = distance;
 						nearestBlock = b;
@@ -223,7 +225,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 				}
 			}
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 		}
 		return nearestBlock;
@@ -233,9 +235,10 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	public void print(String arg) {
 		System.out.println(arg);
 	}
+
 	/*
-	 * find the nearest rock that either a player or monster may be crushed by
-	 * while it's moving or if it is touching and can't move through
+	 * find the nearest rock that either a player or monster may be crushed by while
+	 * it's moving or if it is touching and can't move through
 	 * 
 	 * DELEGATE THIS TO AN OBSERVER PATTERN
 	 */
@@ -266,9 +269,9 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 
 	/*
 	 * this method reads the map through designated files in the package. the
-	 * readMap is dependent on which level the world is currently on and then
-	 * packs everything into arrayLists which are then sent to the drugComponent
-	 * class to be drawn
+	 * readMap is dependent on which level the world is currently on and then packs
+	 * everything into arrayLists which are then sent to the drugComponent class to
+	 * be drawn
 	 */
 	@SuppressWarnings("boxing")
 	private void readMap() {
@@ -302,6 +305,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 		}
 
 		/*******/
+		//This can probably be done with a strategy?
 		try {
 			for (int i = 0; i < 30; i++) {
 				for (int j = 0; j < 36; j++) {
@@ -315,29 +319,30 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 					case 3:
 						// Only creating a new player if he wasn't already
 						// created
-						if (this.player == null)
-							this.player = new Player(27 * j, 27 * i, this);
-						else
+						if (this.player == null) {
+							this.playerObservable = new PlayerObservable();
+							this.player = new Player(27 * j, 27 * i, this, this.playerObservable);
+						} else
 							this.player.moveTo(new Point2D.Double(27 * j, 27 * i));
 						break;
 					case 4:
 
-						this.monsters.add(new TomatoHead(27 * j, 27 * i, this));
+						this.monstersToAdd.add(new TomatoHead(27 * j, 27 * i, this));
 
 						break;
 					case 5:
 
-						this.monsters.add(new PukingTomatoHead(27 * j, 27 * i, this));
+						this.monstersToAdd.add(new PukingTomatoHead(27 * j, 27 * i, this));
 
 						break;
 
 					case 6:
 
-						this.monsters.add(new BombingTomatoHead(27 * j, 27 * i, this));
+						this.monstersToAdd.add(new BombingTomatoHead(27 * j, 27 * i, this));
 
 						break;
 					case 7:
-						this.monsters.add(new UnstableBoss(27 * j, 27 * i, this));
+						this.monstersToAdd.add(new UnstableBoss(27 * j, 27 * i, this));
 						break;
 
 					}
@@ -415,12 +420,11 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 
 	/*
 	 * this method handles the updating of the sprites in the world, and handles
-	 * killing or adding the sprites that are put into the kill or add
-	 * arrayLists
+	 * killing or adding the sprites that are put into the kill or add arrayLists
 	 * 
-	 * WE COULD PROBABLY IMPLEMENT SOME STRATEGIES HERE TO CLEAN UP THE CODE,
-	 * ALSO ADD OBSERVERS HERE SO WE DON'T NEED TO CONSTANTLY CHECK TO SEE
-	 * IF SOME OF THE SPRITES HAVE BEEN REMOVED
+	 * WE COULD PROBABLY IMPLEMENT SOME STRATEGIES HERE TO CLEAN UP THE CODE, ALSO
+	 * ADD OBSERVERS HERE SO WE DON'T NEED TO CONSTANTLY CHECK TO SEE IF SOME OF THE
+	 * SPRITES HAVE BEEN REMOVED
 	 */
 	@Override
 	public synchronized void timePassed() {
@@ -457,8 +461,16 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 			this.madeBonus = true;
 		}
 		this.monsters.addAll(this.monstersToAdd);
+		for(TomatoHead t: monstersToAdd) {
+			this.playerObservable.registerObserver(t);
+		}
+	
 		this.monstersToAdd.clear();
 		this.monsters.removeAll(this.monstersToKill);
+		for(TomatoHead t: monstersToKill) {
+			this.playerObservable.removeObserver(t);
+		}
+		
 		this.monstersToKill.clear();
 
 		if (this.bonus != null) {
@@ -479,8 +491,8 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	}
 
 	/*
-	 * fires the player weapon and adds a ~.5 second delay before the next time
-	 * it can be fired
+	 * fires the player weapon and adds a ~.5 second delay before the next time it
+	 * can be fired
 	 * 
 	 * THIS SHOULD BE MOVED TO PLAYER CLASS
 	 */

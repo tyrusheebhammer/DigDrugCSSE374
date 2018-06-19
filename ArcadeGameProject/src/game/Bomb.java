@@ -34,6 +34,7 @@ public class Bomb extends Puke {
 		setDirection(2 * direction.getX() + direction.getX() * (0.5 - Math.random()),
 				2 * direction.getY() + direction.getY() * (0.5 - Math.random()));
 		setWorth(15);
+		setName("Bomb ");
 	}
 
 	// THIS COULD PROBABLY IMPLEMENT A NEW TYPE OF ATTACK, CALLED EXPLODE, SINCE

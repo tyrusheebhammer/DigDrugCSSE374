@@ -17,6 +17,7 @@ public class BombingTomatoHead extends TomatoHead {
 		setOriginalSize(36);
 		setWorth(150);
 		super.addAttackBehavior(new ShootMissile(dW, this));
+		setName("Bomber ");
 	}
 
 	@Override

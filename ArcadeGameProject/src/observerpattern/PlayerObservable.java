@@ -14,7 +14,9 @@ public class PlayerObservable implements Observable {
 
 	@Override
 	public void registerObserver(Observer o) {
+		//System.out.println(o.toString() + " subscribed");
 		this.observers.add((PlayerObserver) o);
+		this.observers.get(this.observers.size() - 1).updatePlayerLocation(playerLocation);
 		// TODO Auto-generated method stub.
 
 	}
@@ -22,6 +24,7 @@ public class PlayerObservable implements Observable {
 	@Override
 	public void removeObserver(Observer o) {
 		// TODO Auto-generated method stub.
+		//System.out.println(o.toString() + " removed");
 		this.observers.remove(o);
 	}
 

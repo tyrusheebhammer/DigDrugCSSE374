@@ -25,6 +25,7 @@ public class UnstableBoss extends TomatoHead {
 		addAttackBehavior(new Spew(dW, this));
 		addAttackBehavior(new ShootMissile(dW, this));
 		setShrinkFactor(1200);
+		setName("Boss ");
 	}
 
 	@Override

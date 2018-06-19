@@ -30,6 +30,7 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 	private ArrayList<AttackBehavior> attackBehaviors;
 	private int shrinkFactor;
 	private Point2D playerLocation;
+	private String name;
 
 	public TomatoHead(double x, double y, DrugWorld dW) {
 		super();
@@ -46,6 +47,12 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 		this.originalSize = getSize();
 		setDrawPoint(new Point2D.Double(x,y));
 		setOriginalLocation(getDrawPoint());
+		setName("TomatoHead ");
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		
 	}
 
 	private void setOriginalLocation(Point2D drawPoint) {
@@ -264,6 +271,15 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 	public Point2D getDirection() {
 		return new Point2D.Double(this.dx, this.dy);
 	}
+	@Override
+	public String toString() {
+		return getName() + getDrawPoint();
+		
+	}
+	private String getName() {
+		// TODO Auto-generated method stub.
+		return this.name;
+	}
 
 	/*
 	 * this class uses a little bit of geometry to create player tracking. The basic
@@ -277,8 +293,8 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 	 * CREATE AN OBSERVER HERE
 	 */
 	public Point2D getDirectionOfPlayer() {
-		double distX = this.world.getPlayer().getCenterPoint().getX() - this.getCenterPoint().getX();
-		double distY = this.world.getPlayer().getCenterPoint().getY() - this.getCenterPoint().getY();
+		double distX = this.playerLocation.getX() - this.getCenterPoint().getX();
+		double distY = this.playerLocation.getY() - this.getCenterPoint().getY();
 		double total = Math.abs(distX) + Math.abs(distY);
 		distX /= total;
 		distY /= total;

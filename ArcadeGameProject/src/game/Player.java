@@ -28,7 +28,7 @@ public class Player implements Findable, Temporal, Drawable {
 	public boolean isPaused, totalReset, isShielded;
 	private PlayerObservable playerObservable;
 
-	public Player(int x, int y, DrugWorld dW) {
+	public Player(int x, int y, DrugWorld dW, PlayerObservable playerObservable) {
 		this.shieldLeft = 1000;
 		this.lives = 3;
 		this.score = 0;
@@ -38,7 +38,8 @@ public class Player implements Findable, Temporal, Drawable {
 		this.isPaused = false;
 		this.originalLocation = new Point2D.Double(this.x + Player.SIZE / 2 + 12, this.y + Player.SIZE / 2 + 36);
 		this.centerPoint = new Point2D.Double(this.x + Player.SIZE / 2, this.y + Player.SIZE / 2);
-		this.playerObservable = new PlayerObservable();
+		this.playerObservable = playerObservable;
+		notifyObservable();
 	}
 
 	private void notifyObservable() {

@@ -26,6 +26,7 @@ public class PukingTomatoHead extends TomatoHead {
 		setOriginalSize(48);
 		setWorth(200);
 		addAttackBehavior(new Spew(dW, this));
+		setName("Puker ");
 	}
 
 	@Override
