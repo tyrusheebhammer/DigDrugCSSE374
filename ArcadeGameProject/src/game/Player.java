@@ -223,12 +223,6 @@ public class Player implements Findable, Temporal, Drawable {
 
 	}
 
-	@Override
-	public boolean getInteractable() {
-		// TODO Auto-generated method stub.
-		return true;
-	}
-
 	public Point2D getOriginalLocation() {
 		return this.originalLocation;
 	}

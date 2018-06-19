@@ -11,7 +11,7 @@ import java.util.Random;
  * bonus is eaten when the player's shape intersect this
  * shape. The player gets 500 bonus points
  */
-public class BonusScoreObject extends Sprite {
+public class BonusScoreObject extends GameObject {
 	private double x, y, size;
 	private DrugWorld world;
 	private Random rand = new Random();
@@ -48,12 +48,6 @@ public class BonusScoreObject extends Sprite {
 	public void moveTo(Point2D point) {
 		// NOT USED
 
-	}
-
-	@Override
-	public boolean getInteractable() {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

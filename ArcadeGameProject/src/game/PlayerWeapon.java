@@ -10,7 +10,7 @@ import java.awt.geom.Rectangle2D;
  * of ~1 second. When a monster is hit, it expands and is stunned
  * when a monster expands four times it dies.
  */
-public class PlayerWeapon extends Sprite {
+public class PlayerWeapon extends GameObject {
 	private int xLength;
 	private int yLength;
 	private Point2D origin;
@@ -156,10 +156,5 @@ public class PlayerWeapon extends Sprite {
 		
 	}
 
-	@Override
-	public boolean getInteractable() {
-		// TODO Auto-generated method stub.
-		return true;
-	}
 
 }

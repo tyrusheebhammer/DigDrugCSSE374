@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * falling mode and kills anything directly under it,
  * including monsters.
  */
-public class Rock extends Sprite {
+public class Rock extends GameObject {
 
 	private static final int SIZE = 72;
 	private double x, y, dx, dy;
@@ -84,11 +84,6 @@ public class Rock extends Sprite {
 	public Point2D getCenterPoint() {
 		// TODO Auto-generated method stub.
 		return this.centerPoint;
-	}
-
-	@Override
-	public boolean getInteractable() {
-		return true;
 	}
 
 	@Override

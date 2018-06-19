@@ -22,7 +22,6 @@ public class PukingTomatoHead extends TomatoHead {
 	public PukingTomatoHead(int x, int y, DrugWorld dW, Player player) {
 		super(x, y, dW, player);
 		this.explosion = new Explode(dW, this);
-		setPaused(false);
 		setSize(48);
 		setOriginalSize(48);
 		setWorth(200);

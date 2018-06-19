@@ -1,6 +1,5 @@
 package game;
 import java.awt.Color;
-import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import combat.AttackBehavior;
  * a certain number of collisions, the monster
  * turns into a ghost and chases down the player 
  */
-public class TomatoHead extends Sprite  {
+public class TomatoHead extends GameObject  {
 
 	protected DrugWorld world;
 	protected Point2D centerPoint;
@@ -22,7 +21,6 @@ public class TomatoHead extends Sprite  {
 	protected double size = 24;
 	private double originalSize = 24;
 	protected Point2D originalLocation;
-	private int worth;
 	public int Direction;
 	private boolean ghosting;
 	private int collisions;
@@ -30,12 +28,10 @@ public class TomatoHead extends Sprite  {
 	protected int InfCounter;
 	private double popRatio;
 	private ArrayList<AttackBehavior> attackBehaviors;
-	private Player player;
 	private int shrinkFactor;
 
 	public TomatoHead(double x, double y, DrugWorld dW, Player player) {
 		super();
-		this.player = player;
 		this.attackBehaviors = new ArrayList<>();
 		this.shrinkFactor = 300;
 		this.InfCounter = 0;
@@ -51,10 +47,6 @@ public class TomatoHead extends Sprite  {
 		setWorth(100);
 		setPopRatio(2.5);
 	}
-
-	public Player getPlayer() {
-		return this.player;
-	}
 	
 	public void addAttackBehavior(AttackBehavior attack) {
 		this.attackBehaviors.add(attack);
@@ -65,13 +57,6 @@ public class TomatoHead extends Sprite  {
 	public double getPopRatio() {
 		return this.popRatio;
 	}
-	public void setWorth(int worth) {
-		this.worth = worth;
-	}
-
-	public int getWorth() {
-		return this.worth;
-	}
 
 	public void setCollisions(int col) {
 		this.collisions = col;
@@ -81,14 +66,7 @@ public class TomatoHead extends Sprite  {
 		return this.originalLocation;
 	}
 
-	public void setPaused(boolean isPaused) {
-		this.isPaused = isPaused;
-	}
-
-	public boolean getPaused() {
-		return this.isPaused;
-	}
-
+	//USE DECORATOR HERE
 	@Override
 	public Color getColor() {
 		if (!this.ghosting) {
@@ -97,41 +75,14 @@ public class TomatoHead extends Sprite  {
 		return Color.WHITE;
 	}
 
-	public double getSize() {
-		return this.size;
-	}
-
-	public void setSize(double size) {
-		this.size = size;
-	}
-
 	public void setGhosting(boolean b) {
 		this.ghosting = b;
-	}
-
-	public boolean getGhosting() {
-		return this.ghosting;
 	}
 
 	public int getCollisions() {
 		return this.collisions;
 	}
 
-	public Point2D getLocation() {
-		return this.centerPoint;
-	}
-
-	@Override
-	public Shape getShape() {
-
-		return new Rectangle2D.Double(this.x, this.y, this.size, this.size);
-	}
-
-	@Override
-	public Point2D getCenterPoint() {
-		// TODO Auto-generated method stub.
-		return this.centerPoint;
-	}
 
 	public void attack() {
 		for(AttackBehavior a: this.attackBehaviors) {
@@ -143,6 +94,7 @@ public class TomatoHead extends Sprite  {
 	 * monster is ghosting or not, if ther are any collisions. And if the
 	 * monster is ghosting, it will track down the player and then eventually
 	 * unghost if in a position where it isn't colliding with anything
+	 * THIS SHOULD BE A DECORATOR
 	 */
 	public void move() {
 		if (this.isPaused != true) {
@@ -229,18 +181,12 @@ public class TomatoHead extends Sprite  {
 
 	@Override
 	public void moveTo(Point2D point) {
-		this.x = point.getX();
-		this.y = point.getY();
-		this.centerPoint = point;
+		super.moveTo(point);
 		setGhosting(false);
 		setPaused(false);
 	}
 
-	@Override
-	public boolean getInteractable() {
-		// TODO Auto-generated method stub.
-		return true;
-	}
+
 
 	@Override
 	public void die() {

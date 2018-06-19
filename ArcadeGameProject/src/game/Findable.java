@@ -10,5 +10,4 @@ public interface Findable {
 	
 	void moveTo(Point2D point);
 	//This is used for telling the player if something can the player can interact, if not, then player cannot move through it;
-	boolean getInteractable();
 }

@@ -18,7 +18,6 @@ public class Bomb extends Puke {
 	private double MaxSize;
 	private DrugWorld world;
 	private double tempSize;
-	private Player player;
 
 	// Creates a ball that fires towards the player through objects, exploding once
 	// reaching
@@ -32,7 +31,6 @@ public class Bomb extends Puke {
 		this.MaxSize = (Math.random() * 50 + 40);
 		this.world = dW;
 		this.tempSize = 30;
-		this.player = player;
 		setDirection(2 * direction.getX() + direction.getX() * (0.5 - Math.random()),
 				2 * direction.getY() + direction.getY() * (0.5 - Math.random()));
 		setWorth(15);
@@ -61,7 +59,7 @@ public class Bomb extends Puke {
 
 	@Override
 	public Shape getShape() {
-		return new Ellipse2D.Double(getLocation().getX(), getLocation().getY(), this.tempSize, this.tempSize);
+		return new Ellipse2D.Double(getCenterPoint().getX(), getCenterPoint().getY(), this.tempSize, this.tempSize);
 
 	}
 
@@ -73,8 +71,8 @@ public class Bomb extends Puke {
 
 	@Override
 	public void move() {
-		moveTo(new Point2D.Double(getLocation().getX() + getDirection().getX(),
-				getLocation().getY() + getDirection().getY()));
+		moveTo(new Point2D.Double(getCenterPoint().getX() + getDirection().getX(),
+				getCenterPoint().getY() + getDirection().getY()));
 	}
 
 	@Override
