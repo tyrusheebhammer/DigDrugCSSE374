@@ -21,11 +21,10 @@ public class ShootMissile implements AttackBehavior {
 		int j = (int) (400 + Math.random() * 10000);
 
 		this.timeSinceLastShot++;
-		if (this.timeSinceLastShot > j && !monster.getGhosting() && !monster.checkForCollision()
-				&& !monster.getPaused()) {
+		if (this.timeSinceLastShot > j && !this.monster.getGhosting() && !this.monster.checkForCollision()
+				&& !this.monster.getPaused()) {
 			this.timeSinceLastShot = 0;
-			this.world.monstersToAdd.add(new Bomb(monster.getDirectionOfPlayer(), monster.getCenterPoint(), this.world,
-					this.monster.getPlayer()));
+			this.world.monstersToAdd.add(new Bomb(this.monster.getDirectionOfPlayer(), this.monster.getCenterPoint(), this.world));
 		}
 	}
 

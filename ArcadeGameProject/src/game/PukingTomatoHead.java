@@ -19,8 +19,8 @@ import combat.Spew;
 public class PukingTomatoHead extends TomatoHead {
 	private AttackBehavior explosion;
 
-	public PukingTomatoHead(int x, int y, DrugWorld dW, Player player) {
-		super(x, y, dW, player);
+	public PukingTomatoHead(int x, int y, DrugWorld dW) {
+		super(x, y, dW);
 		this.explosion = new Explode(dW, this);
 		setSize(48);
 		setOriginalSize(48);

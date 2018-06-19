@@ -6,6 +6,8 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import observerpattern.PlayerObservable;
+
 /*
  * this class is what the user controls. The player can move
  * around the map, mine dirt, shoot its weapon to kill
@@ -24,6 +26,7 @@ public class Player implements Findable, Temporal, Drawable {
 	private Point2D originalLocation;
 	public int Direction;
 	public boolean isPaused, totalReset, isShielded;
+	private PlayerObservable playerObservable;
 
 	public Player(int x, int y, DrugWorld dW) {
 		this.shieldLeft = 1000;
@@ -35,9 +38,12 @@ public class Player implements Findable, Temporal, Drawable {
 		this.isPaused = false;
 		this.originalLocation = new Point2D.Double(this.x + Player.SIZE / 2 + 12, this.y + Player.SIZE / 2 + 36);
 		this.centerPoint = new Point2D.Double(this.x + Player.SIZE / 2, this.y + Player.SIZE / 2);
-
+		this.playerObservable = new PlayerObservable();
 	}
 
+	private void notifyObservable() {
+		this.playerObservable.setPlayerLocation(getCenterPoint());
+	}
 	/*
 	 * uses the world's nearest dirt method to check if the player is going to dig
 	 * dirt, and kills the dirt if it is dug, giving player 3 points per block
@@ -220,7 +226,7 @@ public class Player implements Findable, Temporal, Drawable {
 		checkForRockCollision();
 		move();
 		shielded();
-
+		notifyObservable();
 	}
 
 	public Point2D getOriginalLocation() {

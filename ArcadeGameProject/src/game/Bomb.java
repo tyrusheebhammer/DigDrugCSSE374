@@ -24,8 +24,8 @@ public class Bomb extends Puke {
 	// a certain size, creating a puke blast in that area that does respond to
 	// blocks.
 
-	public Bomb(Point2D direction, Point2D location, DrugWorld dW, Player player) {
-		super(direction, location, dW, player, 1, 1);
+	public Bomb(Point2D direction, Point2D location, DrugWorld dW) {
+		super(direction, location, dW, 1, 1);
 		// TODO Auto-generated constructor stub.
 		this.color = new Color((int) (50 + Math.random() * 204), (int) (50 + Math.random() * 204), 0);
 		this.MaxSize = (Math.random() * 50 + 40);

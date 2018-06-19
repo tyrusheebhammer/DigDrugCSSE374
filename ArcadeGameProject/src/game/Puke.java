@@ -19,8 +19,8 @@ public class Puke extends TomatoHead {
 	private int lifeLimit;
 	private DrugWorld world;
 
-	public Puke(Point2D direction, Point2D location, DrugWorld dW, Player player, double spread, double life) {
-		super(location.getX() - Math.random() * 36, location.getY() - Math.random() * 36, dW, player);
+	public Puke(Point2D direction, Point2D location, DrugWorld dW, double spread, double life) {
+		super(location.getX() - Math.random() * 36, location.getY() - Math.random() * 36, dW);
 		this.color = new Color((int) (50 + Math.random() * 204), (int) (50 + Math.random() * 204), 0);
 		this.lifeLimit = (int) ((Math.random() * 200)*life);
 		setSize(5);

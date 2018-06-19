@@ -16,14 +16,8 @@ import combat.Spew;
  * boss shoots projectiles more often
  */
 public class UnstableBoss extends TomatoHead {
-
-
-
-	private Player player;
-
-	public UnstableBoss(double x, double y, DrugWorld dW, Player player) {
-		super(x, y, dW, player);
-		this.player = player;
+	public UnstableBoss(double x, double y, DrugWorld dW) {
+		super(x, y, dW);
 		setSize(100);
 		setWorth(1500);
 		setOriginalSize(100);

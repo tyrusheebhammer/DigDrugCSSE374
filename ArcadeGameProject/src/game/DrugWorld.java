@@ -322,22 +322,22 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 						break;
 					case 4:
 
-						this.monsters.add(new TomatoHead(27 * j, 27 * i, this, this.player));
+						this.monsters.add(new TomatoHead(27 * j, 27 * i, this));
 
 						break;
 					case 5:
 
-						this.monsters.add(new PukingTomatoHead(27 * j, 27 * i, this, this.player));
+						this.monsters.add(new PukingTomatoHead(27 * j, 27 * i, this));
 
 						break;
 
 					case 6:
 
-						this.monsters.add(new BombingTomatoHead(27 * j, 27 * i, this, this.player));
+						this.monsters.add(new BombingTomatoHead(27 * j, 27 * i, this));
 
 						break;
 					case 7:
-						this.monsters.add(new UnstableBoss(27 * j, 27 * i, this, this.player));
+						this.monsters.add(new UnstableBoss(27 * j, 27 * i, this));
 						break;
 
 					}

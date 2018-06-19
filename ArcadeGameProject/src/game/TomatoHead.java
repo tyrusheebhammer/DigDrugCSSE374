@@ -6,6 +6,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import combat.AttackBehavior;
+import observerpattern.PlayerObserver;
 
 /*
  * this is the general class for monsters that all 
@@ -14,7 +15,7 @@ import combat.AttackBehavior;
  * a certain number of collisions, the monster
  * turns into a ghost and chases down the player 
  */
-public class TomatoHead extends GameObject {
+public class TomatoHead extends GameObject implements PlayerObserver  {
 
 	protected DrugWorld world;
 	protected double dx, dy;
@@ -28,8 +29,9 @@ public class TomatoHead extends GameObject {
 	private double popRatio;
 	private ArrayList<AttackBehavior> attackBehaviors;
 	private int shrinkFactor;
+	private Point2D playerLocation;
 
-	public TomatoHead(double x, double y, DrugWorld dW, Player player) {
+	public TomatoHead(double x, double y, DrugWorld dW) {
 		super();
 		this.attackBehaviors = new ArrayList<>();
 		this.shrinkFactor = 300;
@@ -312,5 +314,11 @@ public class TomatoHead extends GameObject {
 	 * @TODO
 	 */
 	public void setInflateFactor(int inflate) {}
+
+	@Override
+	public void updatePlayerLocation(Point2D point) {
+		this.playerLocation = point;
+		
+	}
 
 }

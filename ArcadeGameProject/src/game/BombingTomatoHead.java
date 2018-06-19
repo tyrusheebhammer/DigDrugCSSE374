@@ -9,12 +9,10 @@ import combat.ShootMissile;
  */
 public class BombingTomatoHead extends TomatoHead {
 	private Color color;
-	private Player player;
 
-	public BombingTomatoHead(double x2, double y2, DrugWorld dW, Player player) {
-		super(x2, y2, dW, player);
+	public BombingTomatoHead(double x, double y, DrugWorld dW) {
+		super(x, y, dW);
 		this.color = Color.PINK;
-		this.player = player;
 		setSize(36);
 		setOriginalSize(36);
 		setWorth(150);

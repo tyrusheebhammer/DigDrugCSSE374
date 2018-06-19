@@ -18,7 +18,7 @@ public class Explode implements AttackBehavior {
 	public void attack() {
 		for (int i = 0; i < 100; i++) {
 			this.world.monstersToAdd.add(new Puke(new Point2D.Double(0.5 - Math.random(), 0.5 - Math.random()),
-					this.monster.getCenterPoint(), this.world, this.world.getPlayer(), 5, 0.5));
+					this.monster.getCenterPoint(), this.world, 5, 0.5));
 		}
 
 	}
