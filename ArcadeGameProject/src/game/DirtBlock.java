@@ -14,8 +14,9 @@ public class DirtBlock extends GameObject {
 		setDrawPoint(new Point2D.Double(x, y));
 		setSize(27);
 		setColor(new Color(145, 112, 33));
-		setWorth(20);
-
+		setWorth(4);
+		setPlayer(getWorld().getPlayer());
+		
 	}
 	
 	@Override

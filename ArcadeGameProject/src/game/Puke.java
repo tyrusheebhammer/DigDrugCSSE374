@@ -20,7 +20,7 @@ public class Puke extends TomatoHead {
 	private DrugWorld world;
 
 	public Puke(Point2D direction, Point2D location, DrugWorld dW, Player player, double spread, double life) {
-		super(location.getX() + 36 - Math.random() * 36, location.getY() + 36 - Math.random() * 36, dW, player);
+		super(location.getX() - Math.random() * 36, location.getY() - Math.random() * 36, dW, player);
 		this.color = new Color((int) (50 + Math.random() * 204), (int) (50 + Math.random() * 204), 0);
 		this.lifeLimit = (int) ((Math.random() * 200)*life);
 		setSize(5);
@@ -43,8 +43,8 @@ public class Puke extends TomatoHead {
 	public void move() {
 		// TODO Auto-generated method stub
 		setGhosting(false);
-		moveTo(new Point2D.Double(getLocation().getX() + getDirection().getX(),
-				getLocation().getY() + getDirection().getY()));
+		moveTo(new Point2D.Double(getDrawPoint().getX() + getDirection().getX(),
+				getDrawPoint().getY()+ getDirection().getY()));
 
 	}
 
@@ -69,7 +69,7 @@ public class Puke extends TomatoHead {
 		if (checkForCollision()) {
 			setCollisions(getCollisions() + 1);
 		}
-		if (getCollisions() > 22) {
+		if (getCollisions() > 1) {
 			setWorth(0);
 			die();
 		}

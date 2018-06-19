@@ -11,10 +11,13 @@ public abstract class GameObject implements Temporal, Findable, Drawable {
 	private boolean isPaused;
 	private double size;
 	private Point2D centerPoint;
-	private double x;
-	private double y;
 	private DrugWorld world;
 	private Color color;
+	private Point2D drawPoint;
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 
 	public void setWorld(DrugWorld world) {
 		this.world = world;
@@ -53,15 +56,18 @@ public abstract class GameObject implements Temporal, Findable, Drawable {
 	}
 
 	public void setDrawPoint(Point2D point) {
-		this.x = point.getX();
-		this.y = point.getY();
-		setCenterPoint(new Point2D.Double(this.x + this.size / 2, this.y + this.size / 2));
+		this.drawPoint = point;
+		setCenterPoint(
+				new Point2D.Double(this.drawPoint.getX() + this.size / 2, this.drawPoint.getY() + this.size / 2));
+	}
+
+	public Point2D getDrawPoint() {
+		return this.drawPoint;
 	}
 
 	@Override
 	public Shape getShape() {
-
-		return new Rectangle2D.Double(this.x, this.y, this.size, this.size);
+		return new Rectangle2D.Double(this.drawPoint.getX(), this.drawPoint.getY(), this.size, this.size);
 	}
 
 	public void setCenterPoint(Point2D point) {
@@ -76,9 +82,7 @@ public abstract class GameObject implements Temporal, Findable, Drawable {
 
 	@Override
 	public void moveTo(Point2D point) {
-		this.x = point.getX();
-		this.y = point.getY();
-		this.centerPoint = point;
+		setDrawPoint(point);
 	}
 
 	@Override

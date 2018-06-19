@@ -207,27 +207,32 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	 */
 	public DirtBlock nearestDirt(Point2D point) {
 		DirtBlock nearestBlock = null;
-
+		DirtBlock lastBlock = null;
 		try {
 
 			double nearestDistance = Double.MAX_VALUE;
 			if (this.blocks.size() != 0) {
 				for (DirtBlock b : this.blocks) {
-
+					lastBlock = b;
 					double distance = point.distanceSq(b.getCenterPoint());
+					
 					if (distance < nearestDistance) {
 						nearestDistance = distance;
 						nearestBlock = b;
-
 					}
 				}
 			}
 		} catch (Exception e) {
+			
+			e.printStackTrace();
 		}
 		return nearestBlock;
 
 	}
 
+	public void print(String arg) {
+		System.out.println(arg);
+	}
 	/*
 	 * find the nearest rock that either a player or monster may be crushed by
 	 * while it's moving or if it is touching and can't move through

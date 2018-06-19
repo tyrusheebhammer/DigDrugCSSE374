@@ -23,7 +23,7 @@ public class Spew implements AttackBehavior {
 	@Override
 	public void attack() {
 		int j = (int) (2000 + Math.random() * 10000);
-
+		j = 0;
 		if (!this.firing) {
 			this.monster.setPaused(false);
 			this.timeSinceLastSpew++;
@@ -40,7 +40,6 @@ public class Spew implements AttackBehavior {
 
 			this.world.monstersToAdd.add(new Puke(this.monster.getDirectionOfPlayer(), this.monster.getCenterPoint(),
 					this.world, this.monster.getPlayer(), 1, 1));
-
 			if (this.timeSpentSpewing > j - 1000) {
 				this.firing = false;
 				this.monster.setPaused(false);

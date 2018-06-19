@@ -63,16 +63,11 @@ public class Bomb extends Puke {
 
 	}
 
-	@Override
-	public Color getColor() {
-		return this.color;
-
-	}
 
 	@Override
 	public void move() {
-		moveTo(new Point2D.Double(getCenterPoint().getX() + getDirection().getX(),
-				getCenterPoint().getY() + getDirection().getY()));
+		moveTo(new Point2D.Double(getDrawPoint().getX() + getDirection().getX(),
+				getDrawPoint().getY() + getDirection().getY()));
 	}
 
 	@Override

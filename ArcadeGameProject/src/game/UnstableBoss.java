@@ -21,8 +21,8 @@ public class UnstableBoss extends TomatoHead {
 
 	private Player player;
 
-	public UnstableBoss(double x2, double y2, DrugWorld dW, Player player) {
-		super(x2, y2, dW, player);
+	public UnstableBoss(double x, double y, DrugWorld dW, Player player) {
+		super(x, y, dW, player);
 		this.player = player;
 		setSize(100);
 		setWorth(1500);
@@ -35,7 +35,7 @@ public class UnstableBoss extends TomatoHead {
 
 	@Override
 	public void timePassed(){
-		moveTo(new Point2D.Double(getCenterPoint().getX()+getDirectionOfPlayer().getX()/5,getCenterPoint().getY()+ getDirectionOfPlayer().getY()/5));
+		moveTo(new Point2D.Double(getDrawPoint().getX()+getDirectionOfPlayer().getX()/5,getDrawPoint().getY()+ getDirectionOfPlayer().getY()/5));
 		checkForPlayerKill();
 		attack();
 		shrink();
@@ -49,7 +49,7 @@ public class UnstableBoss extends TomatoHead {
 	@Override
 	public Shape getShape() {
 		// TODO Auto-generated method stub
-		return new Rectangle2D.Double(getCenterPoint().getX(), getCenterPoint().getY(), getSize(), getSize());
+		return new Rectangle2D.Double(getDrawPoint().getX(), getDrawPoint().getY(), getSize(), getSize());
 	}
 
 }
