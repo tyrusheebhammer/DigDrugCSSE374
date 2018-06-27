@@ -15,7 +15,7 @@ import observerpattern.PlayerObserver;
  * a certain number of collisions, the monster
  * turns into a ghost and chases down the player 
  */
-public class TomatoHead extends GameObject implements PlayerObserver  {
+public class TomatoHead extends GameObject implements PlayerObserver {
 
 	protected DrugWorld world;
 	protected double dx, dy;
@@ -45,19 +45,19 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 		setPopRatio(2.5);
 		setSize(24);
 		this.originalSize = getSize();
-		setDrawPoint(new Point2D.Double(x,y));
+		setDrawPoint(new Point2D.Double(x, y));
 		setOriginalLocation(getDrawPoint());
 		setName("TomatoHead ");
 	}
 
 	public void setName(String name) {
 		this.name = name;
-		
+
 	}
 
 	private void setOriginalLocation(Point2D drawPoint) {
 		this.originalLocation = drawPoint;
-		
+
 	}
 
 	public void addAttackBehavior(AttackBehavior attack) {
@@ -114,6 +114,8 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 	 * position where it isn't colliding with anything THIS SHOULD BE A DECORATOR
 	 */
 	public void move() {
+		if (getSize() > getOriginalSize())
+			return;
 		if (this.isPaused != true) {
 			// checking many cases to see what may affect this monster
 			if (!this.ghosting) {
@@ -144,7 +146,7 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 			// doing actual movement
 			switch (this.world.isInsideWorld(drawPoint, (int) getSize())) {
 			case 'g':
-				setDrawPoint(new Point2D.Double(x , y ));
+				setDrawPoint(new Point2D.Double(x + this.dx, y + this.dy));
 				break;
 			case 'x':
 				setDrawPoint(new Point2D.Double(x - this.dx * 10, y));
@@ -200,6 +202,7 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 	public void print(String arg) {
 		System.out.println(arg);
 	}
+
 	@Override
 	public void moveTo(Point2D point) {
 		super.moveTo(point);
@@ -271,11 +274,13 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 	public Point2D getDirection() {
 		return new Point2D.Double(this.dx, this.dy);
 	}
+
 	@Override
 	public String toString() {
 		return getName() + getDrawPoint();
-		
+
 	}
+
 	private String getName() {
 		// TODO Auto-generated method stub.
 		return this.name;
@@ -325,16 +330,17 @@ public class TomatoHead extends GameObject implements PlayerObserver  {
 		this.shrinkFactor = shrinkFactor;
 
 	}
-	
+
 	/*
 	 * @TODO
 	 */
-	public void setInflateFactor(int inflate) {}
+	public void setInflateFactor(int inflate) {
+	}
 
 	@Override
 	public void updatePlayerLocation(Point2D point) {
 		this.playerLocation = point;
-		
+
 	}
 
 }

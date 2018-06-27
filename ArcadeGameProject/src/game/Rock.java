@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class Rock extends GameObject {
 
 	private static final int SIZE = 72;
-	private double x, y, dx, dy;
+	private double x, y, dy;
 	private Point2D centerPoint;
 	private DrugWorld world;
 	private static final Color COLOR = Color.GRAY;
@@ -26,7 +26,6 @@ public class Rock extends GameObject {
 		this.world = world;
 		this.x = x - 23;
 		this.y = y - 23;
-		this.dx = 0;
 		this.dy = -2;
 		this.centerPoint = new Point2D.Double(x + SIZE / 2, y + SIZE / 2);
 
@@ -70,14 +69,6 @@ public class Rock extends GameObject {
 		this.y += dy;
 		this.dy += 0.05;
 		this.centerPoint = new Point2D.Double(x + SIZE / 2, y + SIZE / 2);
-	}
-
-	public double getX() {
-		return this.centerPoint.getX();
-	}
-
-	public double getY() {
-		return this.centerPoint.getY();
 	}
 
 	@Override

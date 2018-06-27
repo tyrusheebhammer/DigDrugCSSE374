@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
+import factory.MonsterObjectFactory;
 import javafx.geometry.Dimension2D;
 import observerpattern.PlayerObservable;
 
@@ -31,13 +32,13 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	public ArrayList<TomatoHead> monsters = new ArrayList<>();
 	public ArrayList<TomatoHead> monstersToKill = new ArrayList<>();
 	private String[] levels = { "Level1.txt", "Level2.txt", "Level3.txt", "Level4.txt", "Level5.txt", "Level6.txt" };
-
+	private MonsterObjectFactory monsterFactory;
 	private Player player;
 	private BonusScoreObject bonus;
 	public PlayerWeapon weapon;
 	private int currentLevel;
 	private static final Color COLOR = Color.BLACK;
-	protected static final long UPDATE_INTERVAL_MS = 10;
+	protected static final long UPDATE_INTERVAL_MS = 15;
 	private Rectangle2D background;
 	private boolean paused, madeBonus;
 	private double numRocksKilled = 0;
@@ -49,6 +50,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 		this.DC = DC;
 		this.background = new Rectangle2D.Double(0, 0, 972, 810);
 		this.paused = false;
+		this.monsterFactory = new MonsterObjectFactory();
 		readMap();
 		Runnable tickTock = new Runnable() {
 			@Override
@@ -56,12 +58,12 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 				try {
 					while (true) {
 						Thread.sleep(UPDATE_INTERVAL_MS);
-						if (monsters.size() == 0) {
+						if (DrugWorld.this.monsters.size() == 0) {
 							Thread.sleep(1000);
 							nextLevel(true);
 
 						}
-						if (!paused) {
+						if (!DrugWorld.this.paused) {
 
 							timePassed();
 						}
@@ -90,9 +92,9 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	 * returns x, if out by height, return y, else return g for good
 	 */
 	public char isInsideWorld(Point2D point, int size) {
-		if (point.getX() >= background.getWidth() - size / 2 - 2 || point.getX() <= 0 + size / 2 + 2)
+		if (point.getX() >= this.background.getWidth() - size / 2 - 2 || point.getX() <= 0 + size / 2 + 2)
 			return 'x';
-		else if (point.getY() >= background.getHeight() - size / 2 - 2 || point.getY() <= 0 + size / 2 + 2)
+		else if (point.getY() >= this.background.getHeight() - size / 2 - 2 || point.getY() <= 0 + size / 2 + 2)
 			return 'y';
 		else
 			return 'g';
@@ -110,17 +112,17 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			for (TomatoHead m : monsters) {
+			for (TomatoHead m : this.monsters) {
 				m.moveTo(m.getOriginalLocation());
 			}
 
 			this.player.moveTo(this.player.getOriginalLocation());
 		} else {
 
-			blocks.clear();
-			monsters.clear();
-			rocks.clear();
-			this.removeBonus(bonus);
+			this.blocks.clear();
+			this.monsters.clear();
+			this.rocks.clear();
+			this.removeBonus(this.bonus);
 			this.numRocksKilled = 0;
 			this.madeBonus = false;
 			readMap();
@@ -136,7 +138,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 			System.out.println("This is the first Level, no previous levels");
 			return;
 		}
-		numRocksKilled = 0;
+		this.numRocksKilled = 0;
 		this.currentLevel--;
 		resetLevel(true);
 	}
@@ -149,7 +151,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 
 			return;
 		}
-		numRocksKilled = 0;
+		this.numRocksKilled = 0;
 		this.currentLevel++;
 		resetLevel(true);
 	}
@@ -275,7 +277,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	 */
 	@SuppressWarnings("boxing")
 	private void readMap() {
-		String fileName = levels[currentLevel - 1];
+		String fileName = this.levels[this.currentLevel - 1];
 
 		String line = null;
 
@@ -305,46 +307,27 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 		}
 
 		/*******/
-		//This can probably be done with a strategy?
+		// This can probably be done with a strategy?
 		try {
 			for (int i = 0; i < 30; i++) {
 				for (int j = 0; j < 36; j++) {
-					switch (individualBlocks.get(i * 36 + j)) {
-					case 1:
+					int currentBlock = individualBlocks.get(i * 36 + j);
+					if (currentBlock == 1) {
 						this.blocks.add(new DirtBlock(27 * j, 27 * i, this));
-						break;
-					case 2:
+					} else if (currentBlock == 2) {
 						this.rocks.add(new Rock(27 * j, 27 * i, this));
-						break;
-					case 3:
-						// Only creating a new player if he wasn't already
-						// created
+					} else if (currentBlock == 3) {
 						if (this.player == null) {
 							this.playerObservable = new PlayerObservable();
 							this.player = new Player(27 * j, 27 * i, this, this.playerObservable);
 						} else
 							this.player.moveTo(new Point2D.Double(27 * j, 27 * i));
-						break;
-					case 4:
-
-						this.monstersToAdd.add(new TomatoHead(27 * j, 27 * i, this));
-
-						break;
-					case 5:
-
-						this.monstersToAdd.add(new PukingTomatoHead(27 * j, 27 * i, this));
-
-						break;
-
-					case 6:
-
-						this.monstersToAdd.add(new BombingTomatoHead(27 * j, 27 * i, this));
-
-						break;
-					case 7:
-						this.monstersToAdd.add(new UnstableBoss(27 * j, 27 * i, this));
-						break;
-
+					} else if(currentBlock>3) {
+						System.out.println(this);
+//						monstersToAdd.add(new TomatoHead(27*j, 27*i, this));
+						System.out.println(currentBlock);
+						this.monstersToAdd.add((TomatoHead) this.monsterFactory.createObject(currentBlock,
+								new Point2D.Double(27 * j, 27 * i), this));
 					}
 
 				}
@@ -356,7 +339,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	}
 
 	public void togglePaused() {
-		this.paused = !paused;
+		this.paused = !this.paused;
 	}
 
 	public DrugComponent getComponent() {
@@ -444,15 +427,15 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 			System.out.println("again");
 		}
 
-		if (delay > 0) {
-			delay--;
+		if (this.delay > 0) {
+			this.delay--;
 		}
 		if (this.player != null)
 			this.player.timePassed();
 		this.blocks.removeAll(this.blocksToKill);
 		this.blocksToKill.clear();
 
-		this.numRocksKilled += rocksToKill.size();
+		this.numRocksKilled += this.rocksToKill.size();
 
 		this.rocks.removeAll(this.rocksToKill);
 		this.rocksToKill.clear();
@@ -461,20 +444,20 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 			this.madeBonus = true;
 		}
 		this.monsters.addAll(this.monstersToAdd);
-		for(TomatoHead t: monstersToAdd) {
+		for (TomatoHead t : this.monstersToAdd) {
 			this.playerObservable.registerObserver(t);
 		}
-	
+
 		this.monstersToAdd.clear();
 		this.monsters.removeAll(this.monstersToKill);
-		for(TomatoHead t: monstersToKill) {
+		for (TomatoHead t : this.monstersToKill) {
 			this.playerObservable.removeObserver(t);
 		}
-		
+
 		this.monstersToKill.clear();
 
 		if (this.bonus != null) {
-			bonus.checkForEaten();
+			this.bonus.checkForEaten();
 		}
 
 	}
@@ -497,11 +480,11 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	 * THIS SHOULD BE MOVED TO PLAYER CLASS
 	 */
 	public void fireWeapon() {
-		if (delay == 0) {
+		if (this.delay == 0) {
 			PlayerWeapon woosh = new PlayerWeapon(this.player.getCenterPoint(), this.player.Direction, this);
 			this.weapon = woosh;
 			this.weapon.fire();
-			delay += 50;
+			this.delay += 50;
 		}
 
 	}
