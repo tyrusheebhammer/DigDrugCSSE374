@@ -11,7 +11,7 @@ public abstract class GameObject implements Temporal, Findable, Drawable {
 	private boolean isPaused;
 	private double size;
 	private Point2D centerPoint;
-	private DrugWorld world;
+	private MonsterHandler world;
 	private Color color;
 	private Point2D drawPoint;
 
@@ -19,11 +19,11 @@ public abstract class GameObject implements Temporal, Findable, Drawable {
 		this.player = player;
 	}
 
-	public void setWorld(DrugWorld world) {
-		this.world = world;
+	public void setWorld(MonsterHandler world2) {
+		this.world = world2;
 	}
 
-	public DrugWorld getWorld() {
+	public MonsterHandler getWorld() {
 		return this.world;
 	}
 

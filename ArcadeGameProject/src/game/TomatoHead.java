@@ -2,10 +2,10 @@ package game;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 import combat.AttackBehavior;
+import deathcommands.MonsterDeath;
 import observerpattern.PlayerObserver;
 
 /*
@@ -169,23 +169,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * reverse direction if the it is colliding with anything
 	 */
 	public boolean checkForCollision() {
-
-		try {
-			if (this.world.nearestDirt(getCenterPoint()) != null) {
-				DirtBlock block = this.world.nearestDirt(getCenterPoint());
-				Rock rock = this.world.nearestRock(getCenterPoint());
-				if (this.getShape().intersects((Rectangle2D) block.getShape())
-						|| this.getShape().intersects((Rectangle2D) rock.getShape())) {
-					return true;
-				}
-
-			}
-
-		} catch (NullPointerException e) {
-
-		}
-
-		return false;
+		return this.world.hasCollided(getCenterPoint(), getShape());
 	}
 
 	/*
@@ -193,10 +177,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * unless the player is shielded
 	 */
 	public void checkForPlayerKill() {
-		Player player = this.world.getPlayer();
-		if (this.getShape().intersects((Rectangle2D) player.getShape())) {
-			player.die();
-		}
+		this.world.checkForPlayerKill(getShape());
 	}
 
 	public void print(String arg) {
@@ -212,8 +193,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 
 	@Override
 	public void die() {
-		this.world.removeMonster(this);
-		this.world.setPlayerScore(getWorth());
+		this.world.remove(new MonsterDeath(this));
 	}
 
 	public void resetAttacks() {

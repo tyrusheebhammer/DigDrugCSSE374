@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
+import deathcommands.DeathCommand;
 import factory.MonsterObjectFactory;
 import javafx.geometry.Dimension2D;
 import observerpattern.PlayerObservable;
@@ -22,7 +23,7 @@ import observerpattern.PlayerObservable;
  * controlling the deaths, the reading of the map, and keeps count of 
  * the levels.
  */
-public class DrugWorld implements Temporal, Drawable, ActionListener {
+public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHandler, DeathHandler {
 	private DrugComponent DC;
 	private ArrayList<DirtBlock> blocks = new ArrayList<>();
 	private ArrayList<DirtBlock> blocksToKill = new ArrayList<>();
@@ -38,13 +39,14 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 	public PlayerWeapon weapon;
 	private int currentLevel;
 	private static final Color COLOR = Color.BLACK;
-	protected static final long UPDATE_INTERVAL_MS = 15;
+	protected static final long UPDATE_INTERVAL_MS = 7;
 	private Rectangle2D background;
 	private boolean paused, madeBonus;
 	private double numRocksKilled = 0;
 	private int delay = 0;
 	private PlayerObservable playerObservable;
 
+	// I am on some crack
 	public DrugWorld(DrugComponent DC) {
 		this.currentLevel = 1;
 		this.DC = DC;
@@ -84,6 +86,31 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 
 	public ArrayList<DirtBlock> getDirt() {
 		return this.blocks;
+	}
+
+	public boolean hasCollided(Point2D point, Shape shape) {
+		try {
+			if (nearestDirt(point) != null) {
+				DirtBlock block = nearestDirt(point);
+				Rock rock = nearestRock(point);
+				if (shape.intersects((Rectangle2D) block.getShape())
+						|| shape.intersects((Rectangle2D) rock.getShape())) {
+					return true;
+				}
+
+			}
+
+		} catch (NullPointerException e) {
+
+		}
+
+		return false;
+	}
+
+	public void checkForPlayerKill(Shape shape) {
+		if (shape.intersects((Rectangle2D) this.player.getShape())) {
+			this.player.die();
+		}
 	}
 
 	/*
@@ -322,12 +349,11 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 							this.player = new Player(27 * j, 27 * i, this, this.playerObservable);
 						} else
 							this.player.moveTo(new Point2D.Double(27 * j, 27 * i));
-					} else if(currentBlock>3) {
+					} else if (currentBlock > 3) {
 						System.out.println(this);
-//						monstersToAdd.add(new TomatoHead(27*j, 27*i, this));
+						// monstersToAdd.add(new TomatoHead(27*j, 27*i, this));
 						System.out.println(currentBlock);
-						this.monstersToAdd.add((TomatoHead) this.monsterFactory.createObject(currentBlock,
-								new Point2D.Double(27 * j, 27 * i), this));
+						addMonster(currentBlock, new Point2D.Double(27 * i, 27 * j));
 					}
 
 				}
@@ -336,6 +362,11 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void addMonster(int code, Point2D location) {
+		this.monstersToAdd.add((TomatoHead) this.monsterFactory.createObject(code, location, this));
 	}
 
 	public void togglePaused() {
@@ -359,19 +390,23 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 		return this.player.getScore();
 	}
 
+	@Override
 	public void setPlayerScore(int score) {
 		this.player.setPlayerScore(score);
 	}
 
+	@Override
 	public void removeBlock(DirtBlock d) {
 		this.blocksToKill.add(d);
 	}
 
+	@Override
 	public void removeRock(Rock rock) {
 		this.rocksToKill.add(rock);
 
 	}
 
+	@Override
 	public void removeMonster(TomatoHead monster) {
 		this.monstersToKill.add(monster);
 
@@ -491,6 +526,13 @@ public class DrugWorld implements Temporal, Drawable, ActionListener {
 
 	public Dimension2D getWorldDimension() {
 		return new Dimension2D(this.background.getWidth(), this.background.getHeight());
+	}
+
+	@Override
+	public void remove(DeathCommand command) {
+		command.injectHandler(this);
+		command.kill();
+		
 	}
 
 }

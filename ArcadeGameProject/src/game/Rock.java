@@ -5,6 +5,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
+import deathcommands.RockDeath;
+
 /*
  * this class represents the falling rock
  * in the game. When the player digs 3 dirt 
@@ -28,7 +30,7 @@ public class Rock extends GameObject {
 		this.y = y - 23;
 		this.dy = -2;
 		this.centerPoint = new Point2D.Double(x + SIZE / 2, y + SIZE / 2);
-
+		setWorth(10);
 	}
 
 	/*
@@ -41,15 +43,12 @@ public class Rock extends GameObject {
 		try {
 			if (blocksBelowMe.size() == 0 && !falling) {
 				for (int i = 0; i < 3; i++) {
-					blocksBelowMe.add(this.world.nearestDirt(new Point2D.Double((x) + SIZE * i / 2, (y) + SIZE + 23)));
+					blocksBelowMe.add(this.world.nearestDirt(new Point2D.Double((x) + SIZE * i / 2, (y) + SIZE)));
 				}
 			}
 			if (falling) {
 
-				Player player = this.world.getPlayer();
-				if (this.getShape().intersects((Rectangle2D) player.getShape())) {
-					player.die();
-				}
+				this.world.checkForPlayerKill(getShape());
 				TomatoHead monster = this.world.nearestMonster(centerPoint);
 				if (this.getShape().intersects((Rectangle2D) monster.getShape())) {
 					monster.die();
@@ -79,7 +78,7 @@ public class Rock extends GameObject {
 
 	@Override
 	public void die() {
-		this.world.removeRock(this);
+		this.world.remove(new RockDeath(this));
 
 	}
 

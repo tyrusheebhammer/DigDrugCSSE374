@@ -33,7 +33,7 @@ public class Bomb extends Puke {
 		this.tempSize = 30;
 		setDirection(2 * direction.getX() + direction.getX() * (0.5 - Math.random()),
 				2 * direction.getY() + direction.getY() * (0.5 - Math.random()));
-		setWorth(15);
+		setWorth(0);
 		setName("Bomb ");
 	}
 
