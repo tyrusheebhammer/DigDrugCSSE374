@@ -14,28 +14,36 @@ import java.awt.geom.Point2D;
  * Color is also randomly picked between shades of
  * green and red
  */
-public class Puke extends TomatoHead {
+public class Puke extends Monster {
 	private Color color;
 	private int lifeCounter = 0;
 	private int lifeLimit;
-	private DrugWorld world;
+
 
 	public Puke(Point2D direction, Point2D location, DrugWorld dW, double spread, double life) {
-		super(location.getX() - Math.random() * 36, location.getY() - Math.random() * 36, dW);
-		this.color = new Color((int) (50 + Math.random() * 204), (int) (50 + Math.random() * 204), 0);
-		this.lifeLimit = (int) ((Math.random() * 200)*life);
+		setCollisions(0);
+		setWorld(dW);
+		System.out.println(dW);
+		setDirection(2 * direction.getX() + direction.getX() * (0.5 * spread - Math.random() * spread),
+				2 * direction.getY() + direction.getY() * (0.5 * spread - Math.random() * spread));
+		
+		
+		setWorth(0);
+		setPopRatio(1);
 		setSize(5);
-		this.world = dW;
-		setDirection(2 * direction.getX() + direction.getX() * (0.5*spread - Math.random()*spread),
-				2 * direction.getY() + direction.getY() * (0.5*spread - Math.random()*spread));
-		setWorth(3);
+		
+		setOriginalSize(getSize());
+		setDrawPoint(new Point2D.Double(location.getX() - Math.random() * 36, location.getY() - Math.random() * 36));
+		setOriginalLocation(getDrawPoint());
+		
 		setName("Puke ");
+		this.lifeLimit = (int) ((Math.random() * 200) * life);
 	}
 
 	@Override
 	public void die() {
 		// TODO Auto-generated method stub
-		this.world.monstersToKill.add(this);
+		getWorld().removeMonster(this);
 	}
 
 	/*
@@ -46,14 +54,14 @@ public class Puke extends TomatoHead {
 		// TODO Auto-generated method stub
 		setGhosting(false);
 		moveTo(new Point2D.Double(getDrawPoint().getX() + getDirection().getX(),
-				getDrawPoint().getY()+ getDirection().getY()));
+				getDrawPoint().getY() + getDirection().getY()));
 
 	}
 
 	@Override
 	public Color getColor() {
 		// TODO Auto-generated method stub
-		return this.color;
+		return Color.RED;
 	}
 
 	/*
@@ -61,9 +69,9 @@ public class Puke extends TomatoHead {
 	 * randomly calculated at it's initialization, limiting the projectile from
 	 * moving across the map
 	 */
-	
+
 	@Override
-	public void checkDeathBehavior(){
+	public void checkDeathBehavior() {
 		this.lifeCounter++;
 		if (this.lifeLimit <= this.lifeCounter)
 			die();

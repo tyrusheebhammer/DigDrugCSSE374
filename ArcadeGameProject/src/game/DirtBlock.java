@@ -11,7 +11,7 @@ import deathcommands.DirtDeath;
  */
 public class DirtBlock extends GameObject {
 
-	public DirtBlock(int x, int y, MonsterHandler world) {
+	public DirtBlock(int x, int y, DrugWorld world) {
 		setWorld(world);
 		setDrawPoint(new Point2D.Double(x, y));
 		setSize(27);

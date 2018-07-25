@@ -7,7 +7,7 @@ public interface DeathHandler {
 
 	public void removeRock(Rock rock);
 
-	public void removeMonster(TomatoHead monster);
+	public void removeMonster(Monster monster);
 
 	public void setPlayerScore(int score);
 

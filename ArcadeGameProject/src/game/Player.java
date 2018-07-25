@@ -173,7 +173,7 @@ public class Player implements Findable, Temporal, Drawable {
 	public void die() {
 		if (getShielded()) {
 			this.shieldLeft -= 70;
-			TomatoHead monster = this.world.nearestMonster(this.centerPoint);
+			Monster monster = this.world.nearestMonster(this.centerPoint);
 			double monstX = monster.getCenterPoint().getX() - this.centerPoint.getX();
 			double monstY = monster.getCenterPoint().getY() - this.centerPoint.getY();
 			monster.moveTo(new Point2D.Double(monster.getCenterPoint().getX() + monstX / 2,

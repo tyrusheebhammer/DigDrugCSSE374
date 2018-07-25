@@ -1,9 +1,9 @@
 package deathcommands;
-import game.TomatoHead;
+import game.Monster;
 public class MonsterDeath extends DeathCommand {
 	
-	private TomatoHead monster;
-	public MonsterDeath(TomatoHead monster) {
+	private Monster monster;
+	public MonsterDeath(Monster monster) {
 		this.monster = monster;
 	}
 	@Override

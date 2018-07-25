@@ -21,9 +21,8 @@ import observerpattern.PlayerObserver;
  * a certain number of collisions, the monster
  * turns into a ghost and chases down the player 
  */
-public class TomatoHead extends GameObject implements PlayerObserver {
+public abstract class Monster extends GameObject implements PlayerObserver {
 
-	protected DrugWorld world;
 	protected double dx, dy;
 	private double originalSize = 24;
 	protected Point2D originalLocation;
@@ -31,50 +30,32 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	private boolean ghosting;
 	private int collisions;
 	private boolean isPaused;
-	protected int InfCounter;
+	protected int InfCounter = 0;
 	private double popRatio;
-	private ArrayList<AttackBehavior> attackBehaviors;
-	private int shrinkFactor;
+	protected ArrayList<AttackBehavior> attackBehaviors;
+	private int shrinkFactor = 300;
 	private Point2D playerLocation;
 	private String name;
 
-	private HashMap<String, MonsterState> states;
+	protected HashMap<String, MonsterState> states;
 
 	private MonsterState currentState;
 
-	public TomatoHead(double x, double y, DrugWorld dW) {
-		this.attackBehaviors = new ArrayList<>();
-		this.shrinkFactor = 300;
-		this.InfCounter = 0;
-		this.collisions = 0;
-		this.world = dW;
-		this.dx = 0;
-		this.dy = 0;
-
-		
-		initializeStates();
-		
-		this.currentState = this.states.get("normal");
-
-		setWorth(100);
-		setPopRatio(2.5);
-		setSize(24);
-
-		this.originalSize = getSize();
-		setDrawPoint(new Point2D.Double(x, y));
-		setOriginalLocation(getDrawPoint());
-		setName("TomatoHead ");
-
-	}
-
-	private void initializeStates() {
+	//Hook
+	protected void initializeStates(Color[] stateColors) {
 		this.states = new HashMap<>();
-		this.states.put("ghosting", new GhostState(this, Color.MAGENTA));
-		this.states.put("normal", new NormalState(this, Color.GRAY));
-		this.states.put("attacking", new AttackingState(this, Color.GRAY));
-		this.states.put("inflated", new InflatedState(this, Color.RED));
-
+		this.states.put("ghosting", new GhostState(this, stateColors[0]));
+		this.states.put("normal", new NormalState(this, stateColors[1]));
+		this.states.put("attacking", new AttackingState(this, stateColors[2]));
+		this.states.put("inflated", new InflatedState(this, stateColors[3]));
+		try {
+			setState("normal");
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 	}
+	
+	
 
 	public void setState(String newState) throws Exception {
 		if (this.states.get(newState) == null) {
@@ -96,12 +77,15 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 
 	}
 
-	private void setOriginalLocation(Point2D drawPoint) {
+	protected void setOriginalLocation(Point2D drawPoint) {
 		this.originalLocation = drawPoint;
 
 	}
 
 	public void addAttackBehavior(AttackBehavior attack) {
+		if(this.attackBehaviors == null) {
+			this.attackBehaviors = new ArrayList<>();
+		}
 		this.attackBehaviors.add(attack);
 	}
 
@@ -144,12 +128,16 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 
 	//added a comment
 	public final void attack() {
+		if(this.attackBehaviors == null) {
+			this.attackBehaviors = new ArrayList<>();
+		}
 		if (!this.ghosting && !this.isPaused && !this.checkForCollision()) {
 			for (AttackBehavior a : this.attackBehaviors) {
 				a.attack(getCenterPoint());
 			}
 		}
 	}
+
 
 	/*
 	 * this method is called to move the monster around, dependent on if the monster
@@ -211,7 +199,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 		double x = drawPoint.getX();
 		double y = drawPoint.getY();
 		// doing actual movement
-		switch (this.world.isInsideWorld(drawPoint, (int) getSize())) {
+		switch (getWorld().isInsideWorld(drawPoint, (int) getSize())) {
 		case 'g':
 			setDrawPoint(new Point2D.Double(x + this.dx, y + this.dy));
 			break;
@@ -235,7 +223,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * reverse direction if the it is colliding with anything
 	 */
 	public boolean checkForCollision() {
-		return this.world.hasCollided(getCenterPoint(), getShape());
+		return getWorld().hasCollided(getCenterPoint(), getShape());
 	}
 
 	/*
@@ -243,7 +231,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * unless the player is shielded
 	 */
 	public final void checkForPlayerKill() {
-		this.world.checkForPlayerKill(getShape());
+		getWorld().checkForPlayerKill(getShape());
 	}
 
 	public void print(String arg) {
@@ -253,13 +241,12 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	@Override
 	public void moveTo(Point2D point) {
 		super.moveTo(point);
-		setGhosting(false);
 		setPaused(false);
 	}
 
 	@Override
 	public void die() {
-		this.world.remove(new MonsterDeath(this));
+		getWorld().remove(new MonsterDeath(this));
 	}
 
 	public void resetAttacks() {
@@ -386,14 +373,18 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 
 	public void updateAttackLocation() {
 		for (AttackBehavior a : this.attackBehaviors) {
-			a.updatePlayerDirection(this.getDirectionOfPlayer());
+			try {
+				a.updatePlayerDirection(this.getDirectionOfPlayer());
+				} catch(NullPointerException e) {
+					System.out.println(a + " " + this.getDirectionOfPlayer());
+				}
 		}
 	}
 
 	@Override
 	public void updatePlayerLocation(Point2D point) {
 		this.playerLocation = point;
-		updateAttackLocation();
+		//updateAttackLocation();
 
 	}
 

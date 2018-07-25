@@ -13,10 +13,9 @@ import combat.Explode;
  * bomb that is shot out from the BombingTomatoHead 
  * monster 
  */
-public class Bomb extends Puke {
+public class Bomb extends Monster {
 	private Color color;
 	private double MaxSize;
-	private DrugWorld world;
 	private double tempSize;
 
 	// Creates a ball that fires towards the player through objects, exploding once
@@ -25,15 +24,21 @@ public class Bomb extends Puke {
 	// blocks.
 
 	public Bomb(Point2D direction, Point2D location, DrugWorld dW) {
-		super(direction, location, dW, 1, 1);
-		// TODO Auto-generated constructor stub.
-		this.color = new Color((int) (50 + Math.random() * 204), (int) (50 + Math.random() * 204), 0);
-		this.MaxSize = (Math.random() * 50 + 40);
-		this.world = dW;
-		this.tempSize = 30;
+		setCollisions(0);
+		setWorld(dW);
+		System.out.println(dW);
 		setDirection(2 * direction.getX() + direction.getX() * (0.5 - Math.random()),
 				2 * direction.getY() + direction.getY() * (0.5 - Math.random()));
+		
 		setWorth(0);
+		setPopRatio(1);
+		this.MaxSize = (Math.random() * 50 + 40);
+		this.tempSize = 30;
+		
+		setDrawPoint(location);
+		setOriginalLocation(getDrawPoint());
+		// TODO Auto-generated constructor stub.
+		
 		setName("Bomb ");
 	}
 	
@@ -45,7 +50,7 @@ public class Bomb extends Puke {
 	public void checkDeathBehavior() {
 		this.tempSize += .09;
 		if (this.MaxSize <= this.tempSize) {
-			AttackBehavior explosion = new Explode(this.world);
+			AttackBehavior explosion = new Explode(getWorld());
 			explosion.attack(this.getCenterPoint());
 			super.die();
 		}

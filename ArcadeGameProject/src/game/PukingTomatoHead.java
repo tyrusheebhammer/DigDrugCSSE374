@@ -1,6 +1,7 @@
 package game;
 
 import java.awt.Color;
+import java.awt.geom.Point2D;
 
 import combat.AttackBehavior;
 import combat.Explode;
@@ -16,32 +17,38 @@ import combat.Spew;
  * the player when it turns into a ghost
  */
 
-public class PukingTomatoHead extends TomatoHead {
+public class PukingTomatoHead extends Monster {
 	private AttackBehavior explosion;
 
-	public PukingTomatoHead(double d, double e, DrugWorld dW) {
-		super(d, e, dW);
-		this.explosion = new Explode(dW);
-		setSize(48);
-		setOriginalSize(48);
+	public PukingTomatoHead(double x, double y, DrugWorld dW) {
+		
+		setCollisions(0);
+		setWorld(dW);
+		setDirection(1,0);
+		
+		Color[] colors = {Color.LIGHT_GRAY, Color.YELLOW, Color.YELLOW, Color.RED};
+		initializeStates(colors);
+		
 		setWorth(200);
-		addAttackBehavior(new Spew(dW, this.getDirectionOfPlayer()));
+		setSize(48);
+		setPopRatio(2.5);
+		
+		setOriginalSize(getSize());
+		setDrawPoint(new Point2D.Double(x, y));
+		setOriginalLocation(getDrawPoint());
+
 		setName("Puker ");
+		
+		addAttackBehavior(new Spew(dW, this.getDirectionOfPlayer()));
+		this.explosion = new Explode(dW);
 	}
 
-	@Override
-	public Color getColor() {
-		if (!getGhosting()) {
-			return Color.YELLOW;
-		}
-		return Color.LIGHT_GRAY;
-	}
 
 
 //Turn this into a decorator
 	@Override
 	public void die() {
-		this.explosion.attack(getCenterPoint());
+		//this.explosion.attack(getCenterPoint());
 		super.die();
 
 		/*

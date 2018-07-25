@@ -17,7 +17,12 @@ public class PlayerObservable implements Observable {
 	public void registerObserver(Observer o) {
 		//System.out.println(o.toString() + " subscribed");
 		this.observers.add((PlayerObserver) o);
-		this.observers.get(this.observers.size() - 1).updatePlayerLocation(this.playerLocation);
+		
+		try {
+			this.observers.get(this.observers.size() - 1).updatePlayerLocation(this.playerLocation);
+		} catch (Exception e) {
+			System.out.println(this.observers.get(this.observers.size() - 1));
+		}
 		// TODO Auto-generated method stub.
 
 	}

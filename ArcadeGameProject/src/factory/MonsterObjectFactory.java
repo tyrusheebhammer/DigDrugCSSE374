@@ -5,8 +5,8 @@ import java.awt.geom.Point2D;
 import game.BombingTomatoHead;
 import game.DrugWorld;
 import game.GameObject;
+import game.NormalTomatoHead;
 import game.PukingTomatoHead;
-import game.TomatoHead;
 import game.UnstableBoss;
 
 public class MonsterObjectFactory implements GameObjectFactory {
@@ -21,7 +21,7 @@ public class MonsterObjectFactory implements GameObjectFactory {
 		System.out.println(position);
 		switch (objectName) {
 		case 4:
-			return new TomatoHead(position.getX(), position.getY(), world);
+			return new NormalTomatoHead(position.getX(), position.getY(), world);
 		case 5:
 			return new PukingTomatoHead(position.getX(),position.getY(),world);
 		case 6:

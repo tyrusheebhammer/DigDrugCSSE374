@@ -1,4 +1,5 @@
 package game;
+
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
@@ -15,13 +16,20 @@ import combat.Spew;
  * is a more powerful puker and bomber. The 
  * boss shoots projectiles more often
  */
-public class UnstableBoss extends TomatoHead {
+public class UnstableBoss extends Monster {
 	public UnstableBoss(double x, double y, DrugWorld dW) {
-		super(x, y, dW);
-		setSize(100);
+		setCollisions(0);
+		setWorld(dW);
+		setDirection(0,0);
+		
 		setWorth(1500);
-		setOriginalSize(100);
 		setPopRatio(7);
+		setSize(100);
+		
+		setOriginalSize(getSize());
+		setDrawPoint(new Point2D.Double(x, y));
+		setOriginalLocation(getDrawPoint());
+		
 		addAttackBehavior(new Spew(dW, this.getDirectionOfPlayer()));
 		addAttackBehavior(new ShootMissile(dW, this.getDirectionOfPlayer()));
 		setShrinkFactor(1200);
@@ -29,18 +37,21 @@ public class UnstableBoss extends TomatoHead {
 	}
 
 	@Override
-	public void timePassed(){
-		moveTo(new Point2D.Double(getDrawPoint().getX()+getDirectionOfPlayer().getX()/5,getDrawPoint().getY()+ getDirectionOfPlayer().getY()/5));
+	public void timePassed() {
+		moveTo(new Point2D.Double(getDrawPoint().getX() + getDirectionOfPlayer().getX() / 5,
+				getDrawPoint().getY() + getDirectionOfPlayer().getY() / 5));
 		checkForPlayerKill();
 		attack();
 		shrink();
 	}
-	
+
 	@Override
-	public Color getColor(){
-		return new Color((int)(155+Math.random()*99),(int)(155+Math.random()*99),(int)(155+Math.random()*99));
-		
+	public Color getColor() {
+		return new Color((int) (155 + Math.random() * 99), (int) (155 + Math.random() * 99),
+				(int) (155 + Math.random() * 99));
+
 	}
+
 	@Override
 	public Shape getShape() {
 		// TODO Auto-generated method stub

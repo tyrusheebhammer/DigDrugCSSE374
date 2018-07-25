@@ -49,7 +49,7 @@ public class Rock extends GameObject {
 			if (falling) {
 
 				this.world.checkForPlayerKill(getShape());
-				TomatoHead monster = this.world.nearestMonster(centerPoint);
+				Monster monster = this.world.nearestMonster(centerPoint);
 				if (this.getShape().intersects((Rectangle2D) monster.getShape())) {
 					monster.die();
 					

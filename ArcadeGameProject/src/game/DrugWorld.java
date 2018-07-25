@@ -29,9 +29,9 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 	private ArrayList<DirtBlock> blocksToKill = new ArrayList<>();
 	private ArrayList<Rock> rocks = new ArrayList<>();
 	private ArrayList<Rock> rocksToKill = new ArrayList<>();
-	public ArrayList<TomatoHead> monstersToAdd = new ArrayList<>();
-	public ArrayList<TomatoHead> monsters = new ArrayList<>();
-	public ArrayList<TomatoHead> monstersToKill = new ArrayList<>();
+	public ArrayList<Monster> monstersToAdd = new ArrayList<>();
+	public ArrayList<Monster> monsters = new ArrayList<>();
+	public ArrayList<Monster> monstersToKill = new ArrayList<>();
 	private String[] levels = { "Level1.txt", "Level2.txt", "Level3.txt", "Level4.txt", "Level5.txt", "Level6.txt" };
 	private MonsterObjectFactory monsterFactory;
 	private Player player;
@@ -89,6 +89,10 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 	}
 
 	public boolean hasCollided(Point2D point, Shape shape) {
+		if(point == null || shape == null) {
+			System.out.println("Something is null");
+			return true;
+		}
 		try {
 			if (nearestDirt(point) != null) {
 				DirtBlock block = nearestDirt(point);
@@ -101,7 +105,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 			}
 
 		} catch (NullPointerException e) {
-
+			e.printStackTrace();
 		}
 
 		return false;
@@ -139,7 +143,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			for (TomatoHead m : this.monsters) {
+			for (Monster m : this.monsters) {
 				m.moveTo(m.getOriginalLocation());
 			}
 
@@ -208,14 +212,14 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 	 * find the nearest monster that the player may intersect and be killed by
 	 * DELEGATE THIS TO OBSERVER PATTERN**********************
 	 */
-	public TomatoHead nearestMonster(Point2D point) {
-		TomatoHead monster = null;
+	public Monster nearestMonster(Point2D point) {
+		Monster monster = null;
 
 		try {
 
 			double nearestDistance = Double.MAX_VALUE;
 			if (this.monsters.size() != 0) {
-				for (TomatoHead m : this.monsters) {
+				for (Monster m : this.monsters) {
 
 					double distance = point.distanceSq(m.getCenterPoint());
 					if (distance < nearestDistance) {
@@ -367,7 +371,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 
 	@Override
 	public void addMonster(int code, Point2D location) {
-		this.monstersToAdd.add((TomatoHead) this.monsterFactory.createObject(code, location, this));
+		this.monstersToAdd.add((Monster) this.monsterFactory.createObject(code, location, this));
 	}
 
 	public void togglePaused() {
@@ -408,7 +412,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 	}
 
 	@Override
-	public void removeMonster(TomatoHead monster) {
+	public void removeMonster(Monster monster) {
 		this.monstersToKill.add(monster);
 
 	}
@@ -480,13 +484,13 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 			this.madeBonus = true;
 		}
 		this.monsters.addAll(this.monstersToAdd);
-		for (TomatoHead t : this.monstersToAdd) {
+		for (Monster t : this.monstersToAdd) {
 			this.playerObservable.registerObserver(t);
 		}
 
 		this.monstersToAdd.clear();
 		this.monsters.removeAll(this.monstersToKill);
-		for (TomatoHead t : this.monstersToKill) {
+		for (Monster t : this.monstersToKill) {
 			this.playerObservable.removeObserver(t);
 		}
 
