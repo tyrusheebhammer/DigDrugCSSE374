@@ -335,6 +335,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 
 		/*******/
 		// This can probably be done with a strategy?
+
 		try {
 			for (int i = 0; i < 30; i++) {
 				for (int j = 0; j < 36; j++) {
@@ -344,11 +345,11 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 					} else if (currentBlock == 2) {
 						this.rocks.add(new Rock(27 * j, 27 * i, this));
 					} else if (currentBlock == 3) {
+						this.playerObservable = new PlayerObservable();
 						if (this.player == null) {
-							this.playerObservable = new PlayerObservable();
 							this.player = new Player(27 * j, 27 * i, this, this.playerObservable);
-						} else
-							this.player.moveTo(new Point2D.Double(27 * j, 27 * i));
+						}
+						this.player.moveTo(new Point2D.Double(27 * j, 27 * i));
 					} else if (currentBlock > 3) {
 						System.out.println(this);
 						// monstersToAdd.add(new TomatoHead(27*j, 27*i, this));
@@ -495,6 +496,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 			this.bonus.checkForEaten();
 		}
 
+		this.playerObservable.setPlayerLocation(this.player.getCenterPoint());
 	}
 
 	public Player getPlayer() {
@@ -532,7 +534,7 @@ public class DrugWorld implements Temporal, Drawable, ActionListener, MonsterHan
 	public void remove(DeathCommand command) {
 		command.injectHandler(this);
 		command.kill();
-		
+
 	}
 
 }

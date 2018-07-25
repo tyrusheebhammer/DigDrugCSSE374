@@ -1,37 +1,35 @@
 package combat;
 
+import java.awt.geom.Point2D;
+
 import game.Bomb;
 import game.DrugWorld;
-import game.TomatoHead;
 
-public class ShootMissile implements AttackBehavior {
+public class ShootMissile extends AbstractAttack {
 
 	private int timeSinceLastShot;
-	private TomatoHead monster;
-	private DrugWorld world;
 
-	public ShootMissile(DrugWorld world, TomatoHead monster) {
+	public ShootMissile(DrugWorld world,Point2D playerDirection) {
+		this.playerDirection = playerDirection;
 		this.world = world;
-		this.monster = monster;
-
-	}
-
-	@Override
-	public void attack() {
-		int j = (int) (400 + Math.random() * 10000);
-
-		this.timeSinceLastShot++;
-		if (this.timeSinceLastShot > j && !this.monster.getGhosting() && !this.monster.checkForCollision()
-				&& !this.monster.getPaused()) {
-			this.timeSinceLastShot = 0;
-			this.world.monstersToAdd.add(new Bomb(this.monster.getDirectionOfPlayer(), this.monster.getCenterPoint(), this.world));
-		}
 	}
 
 	@Override
 	public void reset() {
 		// TODO Auto-generated method stub.
 		this.timeSinceLastShot = 0;
+	}
+
+	@Override
+	public void attack(Point2D centerpoint) {
+		int j = (int) (400 + Math.random() * 10000);
+
+		this.timeSinceLastShot++;
+		if (this.timeSinceLastShot > j) {
+			this.timeSinceLastShot = 0;
+			this.world.monstersToAdd.add(new Bomb(this.playerDirection, centerpoint, this.world));
+		}
+
 	}
 
 }

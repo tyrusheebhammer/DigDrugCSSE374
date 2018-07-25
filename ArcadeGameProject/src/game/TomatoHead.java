@@ -3,9 +3,15 @@ package game;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import combat.AttackBehavior;
 import deathcommands.MonsterDeath;
+import monsterstate.AttackingState;
+import monsterstate.GhostState;
+import monsterstate.InflatedState;
+import monsterstate.MonsterState;
+import monsterstate.NormalState;
 import observerpattern.PlayerObserver;
 
 /*
@@ -32,22 +38,57 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	private Point2D playerLocation;
 	private String name;
 
+	private HashMap<String, MonsterState> states;
+
+	private MonsterState currentState;
+
 	public TomatoHead(double x, double y, DrugWorld dW) {
-		super();
 		this.attackBehaviors = new ArrayList<>();
 		this.shrinkFactor = 300;
 		this.InfCounter = 0;
 		this.collisions = 0;
 		this.world = dW;
-		this.dx = 1;
+		this.dx = 0;
 		this.dy = 0;
+
+		
+		initializeStates();
+		
+		this.currentState = this.states.get("normal");
+
 		setWorth(100);
 		setPopRatio(2.5);
 		setSize(24);
+
 		this.originalSize = getSize();
 		setDrawPoint(new Point2D.Double(x, y));
 		setOriginalLocation(getDrawPoint());
 		setName("TomatoHead ");
+
+	}
+
+	private void initializeStates() {
+		this.states = new HashMap<>();
+		this.states.put("ghosting", new GhostState(this, Color.MAGENTA));
+		this.states.put("normal", new NormalState(this, Color.GRAY));
+		this.states.put("attacking", new AttackingState(this, Color.GRAY));
+		this.states.put("inflated", new InflatedState(this, Color.RED));
+
+	}
+
+	public void setState(String newState) throws Exception {
+		if (this.states.get(newState) == null) {
+			throw new Exception("Item doesn't exist");
+		}
+
+		this.currentState = this.states.get(newState);
+	}
+
+	public Point2D getPlayerLocation() {
+		if (this.playerLocation == null) {
+			return this.getCenterPoint();
+		}
+		return this.playerLocation;
 	}
 
 	public void setName(String name) {
@@ -101,9 +142,11 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 		return this.collisions;
 	}
 
-	public void attack() {
-		for (AttackBehavior a : this.attackBehaviors) {
-			a.attack();
+	public final void attack() {
+		if (!this.ghosting && !this.isPaused && !this.checkForCollision()) {
+			for (AttackBehavior a : this.attackBehaviors) {
+				a.attack(getCenterPoint());
+			}
 		}
 	}
 
@@ -113,9 +156,28 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * ghosting, it will track down the player and then eventually unghost if in a
 	 * position where it isn't colliding with anything THIS SHOULD BE A DECORATOR
 	 */
+	public boolean checkForFiring() {
+		for (AttackBehavior a : this.attackBehaviors) {
+			if (a.checkForAttack()) {
+				System.out.println("I am spewing");
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public void move() {
+		if (checkForFiring()) {
+			return;
+		}
 		if (getSize() > getOriginalSize())
 			return;
+		checkForGhosting();
+		movement();
+
+	}
+
+	public void checkForGhosting() {
 		if (this.isPaused != true) {
 			// checking many cases to see what may affect this monster
 			if (!this.ghosting) {
@@ -140,27 +202,30 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 				this.dy = getDirectionOfPlayer().getY();
 
 			}
-			Point2D drawPoint = getDrawPoint();
-			double x = drawPoint.getX();
-			double y = drawPoint.getY();
-			// doing actual movement
-			switch (this.world.isInsideWorld(drawPoint, (int) getSize())) {
-			case 'g':
-				setDrawPoint(new Point2D.Double(x + this.dx, y + this.dy));
-				break;
-			case 'x':
-				setDrawPoint(new Point2D.Double(x - this.dx * 10, y));
-				this.dx *= -1;
-				this.collisions++;
-				break;
-			case 'y':
-				setDrawPoint(new Point2D.Double(x, y - this.dy));
-				this.dy *= -1;
-				this.collisions++;
-				break;
-			default:
-				break;
-			}
+		}
+	}
+
+	public void movement() {
+		Point2D drawPoint = getDrawPoint();
+		double x = drawPoint.getX();
+		double y = drawPoint.getY();
+		// doing actual movement
+		switch (this.world.isInsideWorld(drawPoint, (int) getSize())) {
+		case 'g':
+			setDrawPoint(new Point2D.Double(x + this.dx, y + this.dy));
+			break;
+		case 'x':
+			setDrawPoint(new Point2D.Double(x - this.dx * 10, y));
+			this.dx *= -1;
+			this.collisions++;
+			break;
+		case 'y':
+			setDrawPoint(new Point2D.Double(x, y - this.dy));
+			this.dy *= -1;
+			this.collisions++;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -176,7 +241,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * if the monster's shape intersects with the player then the player dies,
 	 * unless the player is shielded
 	 */
-	public void checkForPlayerKill() {
+	public final void checkForPlayerKill() {
 		this.world.checkForPlayerKill(getShape());
 	}
 
@@ -204,11 +269,15 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 
 	@Override
 	public void timePassed() {
-		move();
-		checkForPlayerKill();
-		shrink();
-		attack();
+		move(); // Hook
+		checkForPlayerKill(); // final
+		shrink(); // Hook
+		attack(); // final
+		checkDeathBehavior(); // Hook
+	}
 
+	public void checkDeathBehavior() {
+		// Do nothing
 	}
 
 	public void setOriginalSize(double originalSize) {
@@ -278,6 +347,9 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 	 * CREATE AN OBSERVER HERE
 	 */
 	public Point2D getDirectionOfPlayer() {
+		if (this.playerLocation == null) {
+			return new Point2D.Double(0, 0);
+		}
 		double distX = this.playerLocation.getX() - this.getCenterPoint().getX();
 		double distY = this.playerLocation.getY() - this.getCenterPoint().getY();
 		double total = Math.abs(distX) + Math.abs(distY);
@@ -311,15 +383,16 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 
 	}
 
-	/*
-	 * @TODO
-	 */
-	public void setInflateFactor(int inflate) {
+	public void updateAttackLocation() {
+		for (AttackBehavior a : this.attackBehaviors) {
+			a.updatePlayerDirection(this.getDirectionOfPlayer());
+		}
 	}
 
 	@Override
 	public void updatePlayerLocation(Point2D point) {
 		this.playerLocation = point;
+		updateAttackLocation();
 
 	}
 

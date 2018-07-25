@@ -16,7 +16,7 @@ public class BombingTomatoHead extends TomatoHead {
 		setSize(36);
 		setOriginalSize(36);
 		setWorth(150);
-		super.addAttackBehavior(new ShootMissile(dW, this));
+		super.addAttackBehavior(new ShootMissile(dW, this.getDirectionOfPlayer()));
 		setName("Bomber ");
 	}
 

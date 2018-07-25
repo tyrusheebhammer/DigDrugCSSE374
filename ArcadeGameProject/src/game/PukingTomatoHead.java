@@ -21,11 +21,11 @@ public class PukingTomatoHead extends TomatoHead {
 
 	public PukingTomatoHead(double d, double e, DrugWorld dW) {
 		super(d, e, dW);
-		this.explosion = new Explode(dW, this);
+		this.explosion = new Explode(dW);
 		setSize(48);
 		setOriginalSize(48);
 		setWorth(200);
-		addAttackBehavior(new Spew(dW, this));
+		addAttackBehavior(new Spew(dW, this.getDirectionOfPlayer()));
 		setName("Puker ");
 	}
 
@@ -41,7 +41,7 @@ public class PukingTomatoHead extends TomatoHead {
 //Turn this into a decorator
 	@Override
 	public void die() {
-		this.explosion.attack();
+		this.explosion.attack(getCenterPoint());
 		super.die();
 
 		/*

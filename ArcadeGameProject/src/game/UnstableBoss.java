@@ -22,8 +22,8 @@ public class UnstableBoss extends TomatoHead {
 		setWorth(1500);
 		setOriginalSize(100);
 		setPopRatio(7);
-		addAttackBehavior(new Spew(dW, this));
-		addAttackBehavior(new ShootMissile(dW, this));
+		addAttackBehavior(new Spew(dW, this.getDirectionOfPlayer()));
+		addAttackBehavior(new ShootMissile(dW, this.getDirectionOfPlayer()));
 		setShrinkFactor(1200);
 		setName("Boss ");
 	}

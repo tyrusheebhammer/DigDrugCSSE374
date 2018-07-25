@@ -36,24 +36,17 @@ public class Bomb extends Puke {
 		setWorth(0);
 		setName("Bomb ");
 	}
-
-	// THIS COULD PROBABLY IMPLEMENT A NEW TYPE OF ATTACK, CALLED EXPLODE, SINCE
-	// OTHER
-	// MONSTERS USE THIS WHEN THEY DIE
+	
 	@Override
-	public void timePassed() {
-		// This "monster" moves continuously in the direction of the player from when
-		// it was created until it reaches its randomly assigned max size. It will then
-		// explode
-		// into a puke barage that explodes everywhere.
-		// WE PROBABLY WANT TO CHECK TO SEE IF THE PLAYER HAS BEEN HIT THROUGH SOME
-		// OTHER MEANS
-		move();
-		checkForPlayerKill();
+	public void shrink() {
+		//DO nothing
+	}
+	@Override
+	public void checkDeathBehavior() {
 		this.tempSize += .09;
 		if (this.MaxSize <= this.tempSize) {
-			AttackBehavior explosion = new Explode(this.world, this);
-			explosion.attack();
+			AttackBehavior explosion = new Explode(this.world);
+			explosion.attack(this.getCenterPoint());
 			super.die();
 		}
 	}

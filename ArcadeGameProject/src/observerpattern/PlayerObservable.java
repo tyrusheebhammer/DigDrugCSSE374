@@ -10,13 +10,14 @@ public class PlayerObservable implements Observable {
 
 	public PlayerObservable() {
 		this.observers = new ArrayList<>();
+		this.playerLocation = new Point2D.Double(500,500);
 	}
 
 	@Override
 	public void registerObserver(Observer o) {
 		//System.out.println(o.toString() + " subscribed");
 		this.observers.add((PlayerObserver) o);
-		this.observers.get(this.observers.size() - 1).updatePlayerLocation(playerLocation);
+		this.observers.get(this.observers.size() - 1).updatePlayerLocation(this.playerLocation);
 		// TODO Auto-generated method stub.
 
 	}
@@ -29,18 +30,26 @@ public class PlayerObservable implements Observable {
 	}
 
 	@Override
-	public void notifyObservers() {
+	public void notifyObservers(Point2D playerLocation1) {
 		for (PlayerObserver o : this.observers) {
-			o.updatePlayerLocation(this.playerLocation);
+			o.updatePlayerLocation(playerLocation1);
 		}
 
 	}
 
-	public void setPlayerLocation(Point2D playerLocation) {
-		if (!playerLocation.equals(this.playerLocation)) {
-			this.playerLocation = playerLocation;
-			notifyObservers();
+	public void setPlayerLocation(Point2D playerLocation1) {
+		if (!playerLocation1.equals(this.playerLocation)) {
+			
 		}
+		this.playerLocation = playerLocation1;
+		notifyObservers(playerLocation1);
+		
+	}
+
+	@Override
+	public void notifyObservers() {
+		// TODO Auto-generated method stub.
+		
 	}
 
 }

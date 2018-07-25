@@ -1,48 +1,41 @@
 package combat;
 
+import java.awt.geom.Point2D;
+
 import game.DrugWorld;
 import game.Puke;
-import game.TomatoHead;
 
-public class Spew implements AttackBehavior {
+public class Spew extends AbstractAttack {
 
 	private int timeSpentSpewing;
 	private int timeSinceLastSpew;
 	private boolean firing;
-	private TomatoHead monster;
-	private DrugWorld world;
-
+	private final double j = 500 + Math.random() * 1000;
+	private final double i = 500 + Math.random() * 1000;
 	// will eventually just be the monster, also will then only be a part of the
 	// overall functionality passed
 
-	public Spew(DrugWorld world, TomatoHead monster) {
+	public Spew(DrugWorld world, Point2D playerDirection) {
+		this.playerDirection = playerDirection;
 		this.world = world;
-		this.monster = monster;
 	}
 
 	@Override
-	public void attack() {
-		int j = (int) (2000 + Math.random() * 10000);
-		j = 0;
+	public void attack(Point2D centerpoint) {
 		if (!this.firing) {
-			this.monster.setPaused(false);
 			this.timeSinceLastSpew++;
-			if (this.timeSinceLastSpew > j && !this.monster.getGhosting() && !this.monster.checkForCollision()) {
+			if (this.timeSinceLastSpew > j) {
 				this.firing = true;
-				this.monster.setPaused(true);
 				this.timeSinceLastSpew = 0;
 			}
 		}
 
 		else {
-			this.monster.setPaused(true);
 			this.timeSpentSpewing++;
 
-			this.world.monstersToAdd.add(new Puke(this.monster.getDirectionOfPlayer(), this.monster.getCenterPoint(),
-					this.world, 1, 1));
-			if (this.timeSpentSpewing > j - 1000) {
+			this.world.monstersToAdd.add(new Puke(this.playerDirection, centerpoint, this.world, 1, 1));
+			if (this.timeSpentSpewing > i) {
 				this.firing = false;
-				this.monster.setPaused(false);
 				this.timeSpentSpewing = 0;
 
 			}
@@ -56,9 +49,13 @@ public class Spew implements AttackBehavior {
 		this.firing = false;
 		this.timeSpentSpewing = 0;
 		this.timeSinceLastSpew = 0;
-		
+
 	}
-	
-	
+
+	@Override
+	public boolean checkForAttack() {
+		// System.out.println(firing);
+		return this.firing;
+	}
 
 }
