@@ -142,6 +142,7 @@ public class TomatoHead extends GameObject implements PlayerObserver {
 		return this.collisions;
 	}
 
+	//added a comment
 	public final void attack() {
 		if (!this.ghosting && !this.isPaused && !this.checkForCollision()) {
 			for (AttackBehavior a : this.attackBehaviors) {
